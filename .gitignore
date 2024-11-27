@@ -94,3 +94,5 @@ target/
 .idea/
 *.ipr
 *.iws
+.idea/gradle.xml
+.idea/misc.xml
