@@ -1,0 +1,96 @@
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IntelliJ IDEA
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Kotlin
+.kotlin
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Visual Studio Code
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Log files
+*.log
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~ 
+
+# Backup files
+*.bak
+*.old
+
+# System generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.idea/workspace.xml
+.idea/tasks.xml
+
+# Node.js specific (if applicable)
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Python virtual environments (if applicable)
+.venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Java specific
+*.class
+
+# Cache
+.cache/
+target/
+
+# Test reports
+*.xml
+*.html
+*.json
+
+# JetBrains IDEs
+.idea/
+*.ipr
+*.iws
