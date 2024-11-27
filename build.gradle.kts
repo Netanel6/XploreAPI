@@ -45,13 +45,6 @@ tasks.test {
 
 tasks.register("stage") {
     dependsOn("clean", "build")
-    doLast {
-        copy {
-            from("build/libs")
-            into("build/libs")
-            include("*.jar")
-        }
-    }
 }
 
 kotlin {
