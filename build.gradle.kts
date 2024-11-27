@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.21"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.netanel"
@@ -13,7 +14,7 @@ dependencies {
     val exposedVersion = "0.56.0"
     val ktorVersion = "3.0.0"
     testImplementation(kotlin("test"))
-    // Logging dependency is required for server-side applications; omitting it may cause compilation issues
+
     implementation("ch.qos.logback:logback-classic:1.4.5")
 
     // Ktor
@@ -35,9 +36,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
     implementation("com.h2database:h2:1.4.200")
 
-
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
-
 }
 
 tasks.test {
@@ -46,4 +45,11 @@ tasks.test {
 
 kotlin {
     jvmToolchain(18)
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveClassifier.set("")
+    manifest {
+        attributes(mapOf("Main-Class" to "org.netanel.MainKt"))
+    }
 }
