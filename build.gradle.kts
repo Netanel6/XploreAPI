@@ -42,11 +42,16 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-
 tasks.register("stage") {
     dependsOn("clean", "build")
+    doLast {
+        copy {
+            from("build/libs")
+            include("*.jar")
+            into("$buildDir/libs")
+        }
+    }
 }
-
 kotlin {
     jvmToolchain(18)
 }
