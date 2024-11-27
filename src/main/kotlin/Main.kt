@@ -7,9 +7,12 @@ import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 
+fun main() {
+    // Get the port from the environment variable or default to 8080
+    val port = System.getenv("PORT")?.toInt() ?: 8080
+
+    embeddedServer(Netty, port = port, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
