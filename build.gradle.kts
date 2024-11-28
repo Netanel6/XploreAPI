@@ -44,19 +44,19 @@ kotlin {
     jvmToolchain(17)
 }
 
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveClassifier.set("")
+    manifest {
+        attributes["Main-Class"] = "org.netanel.MainKt"
+    }
+}
+
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = "org.netanel.MainKt"
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-}
-
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveClassifier.set("")
-    manifest {
-        attributes["Main-Class"] = "org.netanel.MainKt"
-    }
 }
 
 tasks.register("stage") {
