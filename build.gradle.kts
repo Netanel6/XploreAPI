@@ -50,6 +50,7 @@ tasks.register("stage") {
 kotlin {
     jvmToolchain(17)
 }
+
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = "org.netanel.MainKt"
