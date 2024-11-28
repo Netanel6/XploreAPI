@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.21"
+    kotlin("plugin.serialization") version "1.8.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -11,8 +12,8 @@ repositories {
 }
 
 dependencies {
-    val exposedVersion = "0.56.0"
     val ktorVersion = "3.0.0"
+    val koinVersion = "4.0.0"
 
     testImplementation(kotlin("test"))
 
@@ -26,16 +27,22 @@ dependencies {
     implementation("io.ktor:ktor-server-resources:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
 
-    // Exposed DB
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
-    implementation("com.h2database:h2:1.4.200")
+    // MongoDB
+    implementation("org.mongodb:mongodb-driver-sync:4.9.1")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
+    // Koin
+    implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koinVersion"))
+    implementation("io.insert-koin:koin-core")
+    implementation("io.insert-koin:koin-ktor")
+    implementation("io.insert-koin:koin-logger-slf4j")
+
+
+
+
+
 
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
 }
