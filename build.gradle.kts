@@ -43,16 +43,15 @@ dependencies {
 kotlin {
     jvmToolchain(17)
 }
-
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveClassifier.set("") // Ensures the file is named without `-all` suffix
+    archiveClassifier.set("all")
     manifest {
-        attributes(mapOf("Main-Class" to "org.netanel.MainKt")) // Replace with your main class
+        attributes(mapOf("Main-Class" to "org.netanel.MainKt"))
     }
 }
 
 tasks.register("stage") {
-    dependsOn("clean", "build")
+    dependsOn("clean", "shadowJar")
 }
 
 tasks.test {
