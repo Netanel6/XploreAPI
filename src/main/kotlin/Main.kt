@@ -42,9 +42,15 @@ fun Application.module() {
             call.respond(HttpStatusCode.OK, "Hello from XploreAPI ")
         }
         get("/questions") {
-            val getQuestionsUseCase: GetQuestionsUseCase = getKoin().get()
-            val questions = getQuestionsUseCase.execute()
-            call.respond(questions)
+            try {
+                val getQuestionsUseCase: GetQuestionsUseCase = getKoin().get()
+                val questions = getQuestionsUseCase.execute()
+                call.respond(questions)
+            } catch (e: Exception) {
+                // Handle exception gracefully
+                println("Error fetching questions: ${e.message}")
+                call.respond(HttpStatusCode.InternalServerError, "Failed to fetch questions")
+            }
         }
     }
 }
