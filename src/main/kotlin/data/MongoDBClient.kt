@@ -12,7 +12,7 @@ import javax.net.ssl.X509TrustManager
 object MongoDBClient {
     fun createDatabase(): MongoDatabase {
         val connectionString: String = System.getenv("MONGODB_URI")
-            ?: "mongodb://localhost:27017"
+            ?: "mongodb+srv://localhost:27017"  // Example for MongoDB Atlas
 
         // Initialize the SSL context with a custom TrustManager to trust all certificates
         val sslContext: SSLContext = SSLContext.getInstance("TLS")
@@ -22,7 +22,7 @@ object MongoDBClient {
         val settings: MongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
             .applyToSslSettings { sslBuilder ->
-                sslBuilder.enabled(false)
+                sslBuilder.enabled(true)  // Keep SSL enabled
                 sslBuilder.context(sslContext)  // Apply the custom SSLContext
                 sslBuilder.invalidHostNameAllowed(true)  // Allow invalid hostnames (for dev purposes)
             }
