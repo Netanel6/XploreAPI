@@ -13,6 +13,7 @@ repositories {
 dependencies {
     val exposedVersion = "0.56.0"
     val ktorVersion = "3.0.0"
+
     testImplementation(kotlin("test"))
 
     implementation("ch.qos.logback:logback-classic:1.4.5")
@@ -45,7 +46,7 @@ kotlin {
 
 tasks.withType<Jar> {
     manifest {
-        attributes["Main-Class"] = "org.netanel.MainKt" // Adjust to match your main class
+        attributes["Main-Class"] = "org.netanel.MainKt"
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
@@ -58,5 +59,3 @@ tasks.register("stage") {
 tasks.test {
     useJUnitPlatform()
 }
-
-
