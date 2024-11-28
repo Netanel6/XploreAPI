@@ -89,10 +89,6 @@ target/
 *.ipr
 *.iws
 
-# Allow certain build artifacts (for Heroku deployment)
-!build/libs/*.jar
-!build/libs/XploreAPI-*.jar
-
 # Remove specific exclusions for clarity
 !**/src/main/**/build/
 !**/src/test/**/build/
