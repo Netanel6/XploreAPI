@@ -1,30 +1,36 @@
-package org.netanel.data
+package data
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import java.util.concurrent.TimeUnit
+import com.mongodb.connection.SslSettings
+import javax.net.ssl.SSLContext
 
 object MongoDBClient {
     fun createDatabase(): MongoDatabase {
-        // Get the MongoDB URI from the environment variable or use a default
         val connectionString: String = System.getenv("MONGODB_URI")
             ?: "mongodb://localhost:27017"
 
-        // Configure the MongoClientSettings, including SSL (handled by mongodb+srv:// format)
-        val settings = MongoClientSettings.builder()
+        val sslContext: SSLContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, arrayOf<javax.net.ssl.TrustManager>(TrustAllCertificates()), java.security.SecureRandom())
+
+        val settings: MongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
-            // Optional: You can configure timeouts if needed
-            .applyToClusterSettings { it.serverSelectionTimeout(30000, TimeUnit.MILLISECONDS) }
-            .applyToSocketSettings { it.connectTimeout(30000, TimeUnit.MILLISECONDS) }
+            .applyToSslSettings {
+                SslSettings.builder().enabled(true).context(sslContext).build()
+            }
             .build()
 
-        // Create a MongoClient using the settings
         val client: MongoClient = MongoClients.create(settings)
 
-        // Return the specified database (e.g., "Xplore")
         return client.getDatabase("Xplore")
+    }
+
+    class TrustAllCertificates : javax.net.ssl.X509TrustManager {
+        override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>?, authType: String?) {}
+        override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>?, authType: String?) {}
+        override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate>? = null
     }
 }

@@ -1,7 +1,7 @@
 package org.netanel.di
 
+import data.MongoDBClient
 import org.koin.dsl.module
-import org.netanel.data.MongoDBClient
 
 val appModule = module {
     single { MongoDBClient.createDatabase() }
