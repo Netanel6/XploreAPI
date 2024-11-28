@@ -39,22 +39,24 @@ dependencies {
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.register("stage") {
-    dependsOn("clean", "build")
-}
-
 kotlin {
     jvmToolchain(17)
 }
 
 tasks.withType<Jar> {
     manifest {
-        attributes["Main-Class"] = "org.netanel.MainKt"
+        attributes["Main-Class"] = "org.netanel.MainKt" // Adjust to match your main class
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 }
+
+tasks.register("stage") {
+    dependsOn("clean", "build")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+
