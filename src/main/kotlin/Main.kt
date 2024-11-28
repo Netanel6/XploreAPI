@@ -11,7 +11,6 @@ import io.ktor.server.routing.*
 fun main() {
     // Get the port from the environment variable or default to 8080
     val port = System.getenv("PORT")?.toInt() ?: 8080
-
     embeddedServer(Netty, port = port, module = Application::module).start(wait = true)
 }
 
