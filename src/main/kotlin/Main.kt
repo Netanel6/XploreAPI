@@ -9,14 +9,12 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.java.KoinJavaComponent.getKoin
-import org.koin.java.KoinJavaComponent.inject
 import org.koin.ktor.plugin.Koin
 import org.netanel.di.appModule
-import org.netanel.questions.di.questionsModule
-import org.netanel.questions.usecase.GetQuestionsUseCase
-import org.netanel.users.usecase.GetUserUseCase
-import org.netanel.users.usersModule
+import org.netanel.quiz.di.quizModule
+import org.netanel.users.di.usersModule
+import quiz.presentation.quizRoutes
+import users.presentation.userRoutes
 
 
 fun main() {
@@ -28,7 +26,7 @@ fun main() {
 
 fun Application.module() {
     install(Koin) {
-        modules(appModule, usersModule, questionsModule)
+        modules(appModule, usersModule, quizModule)
     }
 
     install(ContentNegotiation) { json() }
@@ -43,32 +41,7 @@ fun Application.module() {
         get("/") {
             call.respond(HttpStatusCode.OK, "Hello from XploreAPI ")
         }
-        get("/users") {
-            val getUserUseCase: GetUserUseCase = getKoin().get()
-            val phoneNumber = call.request.queryParameters["phoneNumber"]
-            if (phoneNumber.isNullOrEmpty()) {
-                call.respond(HttpStatusCode.BadRequest, "Phone number is required")
-                return@get
-            }
-
-            val user = getUserUseCase.execute(phoneNumber)
-            if (user != null) {
-                call.respond(HttpStatusCode.OK, user)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "User not found")
-            }
-
-        }
-        get("/questions") {
-            try {
-                val getQuestionsUseCase: GetQuestionsUseCase = getKoin().get()
-                val questions = getQuestionsUseCase.execute()
-                call.respond(questions)
-            } catch (e: Exception) {
-                // Handle exception gracefully
-                println("Error fetching questions: ${e.message}")
-                call.respond(HttpStatusCode.InternalServerError, "Failed to fetch questions")
-            }
-        }
+        userRoutes()
+        quizRoutes()
     }
 }

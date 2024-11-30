@@ -1,4 +1,6 @@
-package org.netanel.questions.repository
+package org.netanel.quiz.repository
+
+import org.netanel.quiz.repository.model.Question
 
 interface QuestionsRepository {
     suspend fun getQuestions(): List<Question>

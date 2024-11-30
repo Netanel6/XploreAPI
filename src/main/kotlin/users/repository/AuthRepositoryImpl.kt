@@ -4,7 +4,7 @@ import com.mongodb.client.MongoDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bson.Document
-import org.netanel.users.model.User
+import org.netanel.users.repository.model.User
 import util.toKotlinObject
 
 class AuthRepositoryImpl(val database: MongoDatabase) : AuthRepository {

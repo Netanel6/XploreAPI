@@ -1,4 +1,4 @@
-package org.netanel.users
+package org.netanel.users.di
 
 import org.koin.dsl.module
 import org.netanel.users.repository.AuthRepository
