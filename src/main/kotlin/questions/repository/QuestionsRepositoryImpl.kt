@@ -9,7 +9,7 @@ class QuestionsRepositoryImpl(val database: MongoDatabase): QuestionsRepository 
     val collection = database.getCollection("test_questions")
 
     override suspend fun getQuestions(): List<Question> {
-        return withContext(Dispatchers.IO) {  // Offload the blocking I/O operation to the IO dispatcher
+        return withContext(Dispatchers.IO) {
             val questions = collection.find().map { it.toKotlinObject<Question>(Question::class.java) }.toList()
             questions
         }
