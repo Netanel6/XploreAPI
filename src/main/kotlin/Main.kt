@@ -15,6 +15,8 @@ import org.koin.ktor.plugin.Koin
 import org.netanel.di.appModule
 import org.netanel.questions.di.questionsModule
 import org.netanel.questions.usecase.GetQuestionsUseCase
+import org.netanel.users.usecase.GetUserUseCase
+import org.netanel.users.usersModule
 
 
 fun main() {
@@ -26,7 +28,7 @@ fun main() {
 
 fun Application.module() {
     install(Koin) {
-        modules(appModule, questionsModule)
+        modules(appModule, usersModule, questionsModule)
     }
 
     install(ContentNegotiation) { json() }
@@ -40,6 +42,22 @@ fun Application.module() {
     routing {
         get("/") {
             call.respond(HttpStatusCode.OK, "Hello from XploreAPI ")
+        }
+        get("/users") {
+            val getUserUseCase: GetUserUseCase = getKoin().get()
+            val phoneNumber = call.request.queryParameters["phoneNumber"]
+            if (phoneNumber.isNullOrEmpty()) {
+                call.respond(HttpStatusCode.BadRequest, "Phone number is required")
+                return@get
+            }
+
+            val user = getUserUseCase.execute(phoneNumber)
+            if (user != null) {
+                call.respond(HttpStatusCode.OK, user)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "User not found")
+            }
+
         }
         get("/questions") {
             try {
