@@ -1,4 +1,4 @@
-package org.netanel.users.model
+package org.netanel.users.repository.model
 
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId

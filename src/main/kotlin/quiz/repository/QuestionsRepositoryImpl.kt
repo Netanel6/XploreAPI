@@ -1,8 +1,9 @@
-package org.netanel.questions.repository
+package org.netanel.quiz.repository
 
 import com.mongodb.client.MongoDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.netanel.quiz.repository.model.Question
 import util.toKotlinObject
 
 class QuestionsRepositoryImpl(val database: MongoDatabase): QuestionsRepository {

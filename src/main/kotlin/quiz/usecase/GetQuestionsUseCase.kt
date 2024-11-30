@@ -1,7 +1,7 @@
-package org.netanel.questions.usecase
+package org.netanel.quiz.usecase
 
-import org.netanel.questions.repository.Question
-import org.netanel.questions.repository.QuestionsRepository
+import org.netanel.quiz.repository.model.Question
+import org.netanel.quiz.repository.QuestionsRepository
 
 class GetQuestionsUseCase(
     private val questionRepository: QuestionsRepository

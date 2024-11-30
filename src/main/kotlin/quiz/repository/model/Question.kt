@@ -1,4 +1,4 @@
-package org.netanel.questions.repository
+package org.netanel.quiz.repository.model
 
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId

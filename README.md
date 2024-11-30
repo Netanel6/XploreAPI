@@ -1,10 +1,10 @@
 # 🧠 XploreAPI
 
-XploreAPI is a backend service designed to power a dynamic and customizable quiz app. It provides endpoints to fetch quiz questions, manage scoring, and interact with MongoDB for data storage. Built with Kotlin and Ktor, it offers lightweight and scalable solutions for quiz-based applications.
+XploreAPI is a backend service designed to power a dynamic and customizable quiz app. It provides endpoints to fetch quiz quiz, manage scoring, and interact with MongoDB for data storage. Built with Kotlin and Ktor, it offers lightweight and scalable solutions for quiz-based applications.
 
 ## 🚀 Features
 
-- **Dynamic Question Management**: Fetch questions categorized by difficulty and type.
+- **Dynamic Question Management**: Fetch quiz categorized by difficulty and type.
 - **MongoDB Integration**: Secure and efficient data storage for quiz content.
 - **Ktor Framework**: Lightweight, fast, and modern server-side framework.
 - **Custom Scoring Logic**: Tailored scoring system based on question difficulty.
@@ -35,10 +35,10 @@ XploreAPI is a backend service designed to power a dynamic and customizable quiz
 
 ## 🌐 API Endpoints
 
-GET /questions
+GET /quiz
 
-- **Description**: Fetch a list of quiz questions.
-- **Response**: JSON array of questions with metadata.
+- **Description**: Fetch a list of quiz quiz.
+- **Response**: JSON array of quiz with metadata.
 
 POST /score
 
