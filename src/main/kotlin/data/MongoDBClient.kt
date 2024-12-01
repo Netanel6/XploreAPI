@@ -5,7 +5,7 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import com.mongodb.connection.SslSettings
+import org.netanel.util.Keys
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 
@@ -13,7 +13,7 @@ object MongoDBClient {
     fun createDatabase(): MongoDatabase {
         // Use the MongoDB URI from the environment variable, or fall back to localhost
         val connectionString: String = System.getenv("MONGODB_URI")
-            ?: "mongodb+srv://netanelca2:oS29Q3LiSBtazPS4@xplorecluster.jkgx7.mongodb.net"
+            ?: Keys.MongoDbClient
 
         // Initialize SSL context with a custom TrustManager to trust all certificates (useful for development)
         val sslContext: SSLContext = SSLContext.getInstance("TLS")
