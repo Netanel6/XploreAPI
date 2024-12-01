@@ -14,6 +14,7 @@ data class Question(
     val text: String? = null,
     val answers: List<String>? = null,
     val correctAnswerIndex: Int? = null,
+    val points: Int,
     val type: QuestionType? = null
 ) {
     @Serializable
@@ -21,10 +22,3 @@ data class Question(
         American, TrueOrFalse
     }
 }
-
-/*  "id": 11,
-    "text": "של איזו חברה היה הרכב הראשון של אור?",
-    "answers": ["כתום מזעזע", "כחול מטאלי", "כחול נייבי", "אוף-וויט"],
-    "correctAnswerIndex": 1,
-    "type": "American"
-*/
