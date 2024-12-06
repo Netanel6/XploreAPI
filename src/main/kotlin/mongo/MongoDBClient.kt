@@ -1,4 +1,4 @@
-package data
+package org.netanel.mongo
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
