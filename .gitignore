@@ -93,3 +93,5 @@ target/
 !**/src/main/**/build/
 !**/src/test/**/build/
 src/main/kotlin/util/Keys.kt
+.idea/gradle.xml
+.idea/misc.xml
