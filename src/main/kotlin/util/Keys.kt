@@ -1,6 +1,7 @@
 package org.netanel.util
 
 object Keys {
+    // TODO: Handle keys here locally and remote
     val MongoDbClient = "mongodb+srv://netanelca2:oS29Q3LiSBtazPS4@xplorecluster.jkgx7.mongodb.net"
     val port = 8080
 

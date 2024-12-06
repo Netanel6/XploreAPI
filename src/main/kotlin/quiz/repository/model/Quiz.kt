@@ -9,7 +9,7 @@ import util.ObjectIdSerializer
 data class Quiz(
     @Serializable(with = ObjectIdSerializer::class)
     val _id: ObjectId? = null,
-    val questions: List<Question>,
+    val questions: List<QuestionV2>,
     val timer: Int,
     val title: String? = null,
     val description: String? = null,
