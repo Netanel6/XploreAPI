@@ -39,11 +39,6 @@ dependencies {
     implementation("io.insert-koin:koin-ktor")
     implementation("io.insert-koin:koin-logger-slf4j")
 
-
-
-
-
-
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
 }
 
