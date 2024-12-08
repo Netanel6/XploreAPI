@@ -5,28 +5,41 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import org.netanel.util.Keys
+import util.EnvironmentConfig
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 
 object MongoDBClient {
+
     fun createDatabase(): MongoDatabase {
-        // Use the MongoDB URI from the environment variable, or fall back to localhost
-        val connectionString: String = System.getenv("MONGODB_URI")
-            ?: Keys.MongoDbClient
+        val connectionString: String = EnvironmentConfig.mongoDbUri
+        val enableSSL: Boolean = EnvironmentConfig.enableSsl.toBoolean()
 
-        // Initialize SSL context with a custom TrustManager to trust all certificates (useful for development)
-        val sslContext: SSLContext = SSLContext.getInstance("TLS")
-        sslContext.init(null, arrayOf<TrustManager>(TrustAllCertificates()), java.security.SecureRandom())
+        // Initialize SSL context only if SSL is enabled
+        val sslContext: SSLContext? = if (enableSSL) {
+            SSLContext.getInstance("TLS").apply {
+                init(null, arrayOf<TrustManager>(TrustAllCertificates()), java.security.SecureRandom())
+            }
+        } else {
+            null
+        }
 
-        // Create MongoClientSettings with custom SSL settings
-        val settings: MongoClientSettings = MongoClientSettings.builder()
+        // Create MongoClientSettings with or without SSL
+        val settingsBuilder = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
-            .applyToSslSettings {
-                it.enabled(true)  // Ensure SSL is enabled
+
+        if (enableSSL && sslContext != null) {
+            settingsBuilder.applyToSslSettings {
+                it.enabled(true)
                 it.context(sslContext)  // Apply custom SSLContext
             }
-            .build()
+        } else {
+            settingsBuilder.applyToSslSettings {
+                it.enabled(false)  // Disable SSL
+            }
+        }
+
+        val settings: MongoClientSettings = settingsBuilder.build()
 
         // Create MongoClient with the settings
         val client: MongoClient = MongoClients.create(settings)

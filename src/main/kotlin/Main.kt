@@ -13,15 +13,12 @@ import org.koin.ktor.plugin.Koin
 import org.netanel.di.appModule
 import org.netanel.quiz.di.quizModule
 import org.netanel.users.di.usersModule
-import org.netanel.util.Keys
 import quiz.presentation.quizRoutes
 import users.presentation.userRoutes
 
 
 fun main() {
-
-    val port = System.getenv("PORT")?.toInt() ?: Keys.port
-    embeddedServer(Netty, port = port, module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
