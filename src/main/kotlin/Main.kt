@@ -16,11 +16,11 @@ import org.netanel.users.di.usersModule
 import org.netanel.util.Keys
 import quiz.presentation.quizRoutes
 import users.presentation.userRoutes
+import util.EnvironmentConfig
 
 
 fun main() {
-
-    val port = System.getenv("PORT")?.toInt() ?: Keys.port
+    val port: Int = EnvironmentConfig.getInt("PORT", 8080)
     embeddedServer(Netty, port = port, module = Application::module).start(wait = true)
 }
 
