@@ -23,7 +23,7 @@ object MongoDBClient {
         val settings: MongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
             .applyToSslSettings {
-                it.enabled(false)  // Ensure SSL is enabled
+                it.enabled(true)  // Ensure SSL is enabled
                 it.context(sslContext)  // Apply custom SSLContext
             }
             .build()
