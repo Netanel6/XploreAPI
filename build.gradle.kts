@@ -39,8 +39,11 @@ dependencies {
     implementation("io.insert-koin:koin-ktor")
     implementation("io.insert-koin:koin-logger-slf4j")
 
+    // FlexMark
     implementation("com.vladsch.flexmark:flexmark-all:0.64.0")
-}
+
+    // dotEnv
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")}
 
 kotlin {
     jvmToolchain(17)
