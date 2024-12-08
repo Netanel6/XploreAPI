@@ -13,10 +13,10 @@ object MongoDBClient {
 
     fun createDatabase(): MongoDatabase {
         val connectionString: String = System.getenv("MONGODB_URI")?: EnvironmentConfig.mongoDbUri
-        val enableSSL: Boolean = System.getenv("ENABLE_SSL").toBoolean() ?: EnvironmentConfig.enableSsl.toBoolean()
+        val enableSSL: String = System.getenv("ENVIRONMENT")?: EnvironmentConfig.env
 
         // Initialize SSL context only if SSL is enabled
-        val sslContext: SSLContext? = if (enableSSL) {
+        val sslContext: SSLContext? = if (enableSSL == "production") {
             SSLContext.getInstance("TLS").apply {
                 init(null, arrayOf<TrustManager>(TrustAllCertificates()), java.security.SecureRandom())
             }
@@ -28,7 +28,7 @@ object MongoDBClient {
         val settingsBuilder = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
 
-        if (enableSSL && sslContext != null) {
+        if (enableSSL == "production" && sslContext != null) {
             settingsBuilder.applyToSslSettings {
                 it.enabled(true)
                 it.context(sslContext)  // Apply custom SSLContext
