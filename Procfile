@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar build/libs/XploreAPI-1.0-all.jar
+web: java -Dserver.port=$PORT -DMONGODB_URI=$MONGODB_URI -jar build/libs/XploreAPI-1.0-all.jar
