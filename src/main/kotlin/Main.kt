@@ -13,7 +13,6 @@ import org.koin.ktor.plugin.Koin
 import org.netanel.di.appModule
 import org.netanel.quiz.di.quizModule
 import org.netanel.users.di.usersModule
-import org.netanel.util.Keys
 import quiz.presentation.quizRoutes
 import users.presentation.userRoutes
 import util.EnvironmentConfig
