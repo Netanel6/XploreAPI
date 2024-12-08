@@ -12,7 +12,7 @@ import javax.net.ssl.TrustManager
 object MongoDBClient {
 
     fun createDatabase(): MongoDatabase {
-        val connectionString: String = System.getenv("PORT")?: EnvironmentConfig.mongoDbUri
+        val connectionString: String = System.getenv("MONGODB_URI")?: EnvironmentConfig.mongoDbUri
         val enableSSL: Boolean = System.getenv("ENABLE_SSL").toBoolean() ?: EnvironmentConfig.enableSsl.toBoolean()
 
         // Initialize SSL context only if SSL is enabled
