@@ -3,5 +3,6 @@ package org.netanel.users.repository
 import org.netanel.users.repository.model.User
 
 interface AuthRepository {
-    suspend fun getUser(phoneNumber: String): User?
+    suspend fun getUserByPhone(phoneNumber: String): User?
+    suspend fun getAllUsers(): List<User>?
 }
