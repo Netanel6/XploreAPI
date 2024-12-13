@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bson.Document
 import org.netanel.users.repository.model.User
+import util.toBsonDocument
 import util.toKotlinObject
 
 class AuthRepositoryImpl(val database: MongoDatabase) : AuthRepository {
@@ -25,4 +26,18 @@ class AuthRepositoryImpl(val database: MongoDatabase) : AuthRepository {
             }
         }
     }
+
+
+    override suspend fun addUser(user: User): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val document = user.toBsonDocument()
+                collection.insertOne(document)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
 }

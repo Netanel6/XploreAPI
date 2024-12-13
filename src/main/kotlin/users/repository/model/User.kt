@@ -10,7 +10,7 @@ data class User(
     val _id: ObjectId? = null,
     val name: String,
     val phone_number: String,
-    val quiz_list: List<Quiz>
+    val quiz_list: List<Quiz>? = null
 ){
     @Serializable
     data class Quiz(val id: String, val title: String)
