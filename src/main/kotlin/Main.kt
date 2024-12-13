@@ -15,10 +15,11 @@ import org.netanel.quiz.di.quizModule
 import org.netanel.users.di.usersModule
 import quiz.presentation.quizRoutes
 import users.presentation.userRoutes
+import util.EnvironmentConfig
 
 
 fun main() {
-    val port = System.getenv("PORT")?.toInt() ?: 8080
+    val port: Int = EnvironmentConfig.getInt("PORT", 8080)
     embeddedServer(Netty, port = port, module = Application::module).start(wait = true)
 }
 

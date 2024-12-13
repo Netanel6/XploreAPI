@@ -95,4 +95,5 @@ target/
 src/main/kotlin/util/Keys.kt
 .idea/gradle.xml
 .idea/misc.xml
-.idea/misc.xml
+
+.env

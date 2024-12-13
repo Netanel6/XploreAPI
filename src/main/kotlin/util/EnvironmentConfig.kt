@@ -3,13 +3,25 @@ package util
 import io.github.cdimascio.dotenv.Dotenv
 
 object EnvironmentConfig {
-    private val dotenv = Dotenv.configure()
-        .ignoreIfMalformed()
-        .ignoreIfMissing()
+    private val dotenv: Dotenv = Dotenv.configure()
+        .ignoreIfMalformed() // Ignore malformed .env files
+        .ignoreIfMissing()   // Ignore missing .env files in production
         .load()
 
-    val enableSsl: String by lazy { dotenv["ENABLE_SSL"] ?: "false" }
-    val mongoDbUri: String by lazy { dotenv["MONGODB_URI"] ?: "mongodb+srv://netanelca2:oS29Q3LiSBtazPS4@xplorecluster.jkgx7.mongodb.net/Xplore?retryWrites=true&w=majority" }
-    val env: String by lazy { dotenv["ENVIRONMENT"] ?: error("ENVIRONMENT is not defined") }
-    val apiUrl: String by lazy { dotenv["API_URL"] ?: error("API_URL is not defined") }
+    fun get(key: String, defaultValue: String? = null): String {
+        return dotenv[key] ?: System.getenv(key) ?: defaultValue
+            ?: throw IllegalArgumentException("Environment variable '$key' is not set.")
+    }
+
+    fun getBoolean(key: String, defaultValue: Boolean = false): Boolean {
+        return dotenv[key]?.toBooleanStrictOrNull()
+            ?: System.getenv(key)?.toBooleanStrictOrNull()
+            ?: defaultValue
+    }
+
+    fun getInt(key: String, defaultValue: Int = 0): Int {
+        return dotenv[key]?.toIntOrNull()
+            ?: System.getenv(key)?.toIntOrNull()
+            ?: defaultValue
+    }
 }

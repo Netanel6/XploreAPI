@@ -7,31 +7,30 @@ import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import util.EnvironmentConfig
 import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
 
 object MongoDBClient {
-
     fun createDatabase(): MongoDatabase {
-        val connectionString: String = System.getenv("MONGODB_URI")?: EnvironmentConfig.mongoDbUri
+        val connectionString: String = EnvironmentConfig.get("MONGODB_URI", "mongodb://localhost")
+        val enableSsl: Boolean = EnvironmentConfig.getBoolean("ENABLE_SSL", false)
 
-        // Create MongoClientSettings with or without SSL
-        val settingsBuilder = MongoClientSettings.builder()
-            .applyConnectionString(ConnectionString(connectionString))
-
-        settingsBuilder.applyToSslSettings {
-            it.enabled(false)
+        val sslContext: SSLContext = SSLContext.getInstance("TLS").apply {
+            init(null, arrayOf(TrustAllCertificates()), java.security.SecureRandom())
         }
 
-        val settings: MongoClientSettings = settingsBuilder.build()
+        val settings: MongoClientSettings = MongoClientSettings.builder()
+            .applyConnectionString(ConnectionString(connectionString))
+            .applyToSslSettings {
+                it.enabled(enableSsl)
+                if (!enableSsl) {
+                    it.context(sslContext)
+                }
+            }
+            .build()
 
-        // Create MongoClient with the settings
         val client: MongoClient = MongoClients.create(settings)
-
-        // Return the "Xplore" database from MongoDB
         return client.getDatabase("Xplore")
     }
 
-    // TrustManager that accepts all certificates (for dev purposes)
     class TrustAllCertificates : javax.net.ssl.X509TrustManager {
         override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>?, authType: String?) {}
         override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>?, authType: String?) {}
