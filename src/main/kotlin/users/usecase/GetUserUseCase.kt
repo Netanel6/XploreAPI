@@ -7,6 +7,6 @@ class GetUserUseCase(
     private val authRepository: AuthRepository
 ) {
     suspend fun execute(phoneNumber: String): User? {
-        return authRepository.getUser(phoneNumber)
+        return authRepository.getUserByPhone(phoneNumber)
     }
 }
