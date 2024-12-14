@@ -12,27 +12,11 @@ object JwtConfig {
 
     private val algorithm = Algorithm.HMAC256(secret)
 
-    fun generateToken(username: String): String {
+    fun generateToken(phoneNumber: String): String {
         return JWT.create()
             .withIssuer(issuer)
             .withAudience(audience)
-            .withClaim("username", username)
+            .withClaim("phoneNumber", phoneNumber)
             .sign(algorithm)
-    }
-
-    fun configureKtor(config: JWTAuthenticationProvider.Config) {
-        config.verifier(
-            JWT
-                .require(algorithm)
-                .withIssuer(issuer)
-                .withAudience(audience)
-                .build()
-        )
-        config.validate { credential ->
-            if (credential.payload.getClaim("username").asString() != null) {
-                JWTPrincipal(credential.payload)
-            } else null
-        }
-        config.realm = realm
     }
 }
