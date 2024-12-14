@@ -1,10 +1,10 @@
 package users.usecase
 
-import org.netanel.users.repository.AuthRepository
+import org.netanel.users.repository.UserRepository
 import org.netanel.users.repository.model.User
 
-class AddUserUseCase(private val authRepository: AuthRepository) {
+class AddUserUseCase(private val userRepository: UserRepository) {
     suspend fun execute(user: User): Boolean {
-        return authRepository.addUser(user)
+        return userRepository.addUser(user)
     }
 }
