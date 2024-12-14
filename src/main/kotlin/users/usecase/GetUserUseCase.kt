@@ -1,12 +1,12 @@
 package org.netanel.users.usecase
 
 import org.netanel.users.repository.model.User
-import org.netanel.users.repository.AuthRepository
+import org.netanel.users.repository.UserRepository
 
 class GetUserUseCase(
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository
 ) {
     suspend fun execute(phoneNumber: String): User? {
-        return authRepository.getUserByPhone(phoneNumber)
+        return userRepository.getUserByPhone(phoneNumber)
     }
 }

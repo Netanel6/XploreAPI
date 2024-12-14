@@ -8,7 +8,7 @@ import org.netanel.users.repository.model.User
 import util.toBsonDocument
 import util.toKotlinObject
 
-class AuthRepositoryImpl(val database: MongoDatabase) : AuthRepository {
+class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
     private val collection = database.getCollection("users")
 
     override suspend fun getUserByPhone(phoneNumber: String): User? {
