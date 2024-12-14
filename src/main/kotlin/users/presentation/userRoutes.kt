@@ -36,7 +36,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
 
             val userWithToken = requestBody.copy(
                 quiz_list = requestBody.quiz_list ?: emptyList(),
-                token = token // Save token to user object
+                token = token
             )
 
             val inserted = addUserUseCase.execute(userWithToken)
@@ -52,30 +52,33 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                 )
             }
         }
-        authenticate("authJWT") {
-            get("{phoneNumber}") {
-                val phoneNumber = call.parameters["phoneNumber"]
-                if (phoneNumber.isNullOrEmpty()) {
-                    call.respond(
-                        HttpStatusCode.BadRequest,
-                        ServerResponse.error("Phone number is required", HttpStatusCode.BadRequest.value)
-                    )
-                    return@get
-                }
-
-                val user = getUserUseCase.execute(phoneNumber)
-                if (user != null) {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        ServerResponse.success(user, HttpStatusCode.OK.value)
-                    )
-                } else {
-                    call.respond(
-                        HttpStatusCode.NotFound,
-                        ServerResponse.error("User not found", HttpStatusCode.NotFound.value)
-                    )
-                }
+        get("{phoneNumber}") {
+            val phoneNumber = call.parameters["phoneNumber"]
+            if (phoneNumber.isNullOrEmpty()) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ServerResponse.error("Phone number is required", HttpStatusCode.BadRequest.value)
+                )
+                return@get
             }
+
+            val user = getUserUseCase.execute(phoneNumber)
+            if (user != null) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    ServerResponse.success(user, HttpStatusCode.OK.value)
+                )
+            } else {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    ServerResponse.error("User not found", HttpStatusCode.NotFound.value)
+                )
+            }
+        }
+
+
+        authenticate("authJWT") {
+            // TODO: Add logic to android app and web side to send in the header the token
 
             get("/all") {
                 val users = getAllUsersUseCase.execute()
