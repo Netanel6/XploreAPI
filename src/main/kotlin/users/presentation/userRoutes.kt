@@ -19,8 +19,8 @@ fun Route.userRoutes() {
 
     route("/users") {
         // Retrieve a single user by phone number
-        get {
-            val phoneNumber = call.request.queryParameters["phoneNumber"]
+        get("{phoneNumber}") {
+            val phoneNumber = call.parameters["phoneNumber"]
             if (phoneNumber.isNullOrEmpty()) {
                 call.respond(
                     HttpStatusCode.BadRequest,
