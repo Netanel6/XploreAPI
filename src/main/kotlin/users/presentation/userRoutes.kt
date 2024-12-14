@@ -7,10 +7,10 @@ import io.ktor.server.routing.*
 import model.ServerResponse
 import org.koin.java.KoinJavaComponent.getKoin
 import org.netanel.users.repository.model.User
-
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
+import util.JwtConfig
 
 fun Route.userRoutes() {
     val getUserUseCase: GetUserUseCase = getKoin().get()
@@ -45,7 +45,6 @@ fun Route.userRoutes() {
         post {
             val requestBody = call.receive<User>()
 
-            // Validate input
             if (requestBody.phone_number.isEmpty() || requestBody.name.isEmpty()) {
                 call.respond(
                     HttpStatusCode.BadRequest,
@@ -54,13 +53,18 @@ fun Route.userRoutes() {
                 return@post
             }
 
-            val user = requestBody.copy(quiz_list = requestBody.quiz_list ?: emptyList())
+            val token = JwtConfig.generateToken(requestBody.phone_number)
 
-            val inserted = addUserUseCase.execute(user)
+            val userWithToken = requestBody.copy(
+                quiz_list = requestBody.quiz_list ?: emptyList(),
+                token = token
+            )
+
+            val inserted = addUserUseCase.execute(userWithToken)
             if (inserted) {
                 call.respond(
                     HttpStatusCode.Created,
-                    ServerResponse.success(user, HttpStatusCode.Created.value)
+                    ServerResponse.success(userWithToken, HttpStatusCode.Created.value)
                 )
             } else {
                 call.respond(
@@ -84,6 +88,5 @@ fun Route.userRoutes() {
                 )
             }
         }
-
     }
 }
