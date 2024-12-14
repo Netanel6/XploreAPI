@@ -19,30 +19,6 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
     val addUserUseCase: AddUserUseCase = getKoin().get()
 
     route("/users") {
-        get("{phoneNumber}") {
-            val phoneNumber = call.parameters["phoneNumber"]
-            if (phoneNumber.isNullOrEmpty()) {
-                call.respond(
-                    HttpStatusCode.BadRequest,
-                    ServerResponse.error("Phone number is required", HttpStatusCode.BadRequest.value)
-                )
-                return@get
-            }
-
-            val user = getUserUseCase.execute(phoneNumber)
-            if (user != null) {
-                call.respond(
-                    HttpStatusCode.OK,
-                    ServerResponse.success(user, HttpStatusCode.OK.value)
-                )
-            } else {
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    ServerResponse.error("User not found", HttpStatusCode.NotFound.value)
-                )
-            }
-        }
-
         post {
             val requestBody = call.receive<User>()
 
@@ -77,6 +53,29 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
             }
         }
         authenticate("authJWT") {
+            get("{phoneNumber}") {
+                val phoneNumber = call.parameters["phoneNumber"]
+                if (phoneNumber.isNullOrEmpty()) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ServerResponse.error("Phone number is required", HttpStatusCode.BadRequest.value)
+                    )
+                    return@get
+                }
+
+                val user = getUserUseCase.execute(phoneNumber)
+                if (user != null) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        ServerResponse.success(user, HttpStatusCode.OK.value)
+                    )
+                } else {
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        ServerResponse.error("User not found", HttpStatusCode.NotFound.value)
+                    )
+                }
+            }
 
             get("/all") {
                 val users = getAllUsersUseCase.execute()
