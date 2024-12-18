@@ -26,6 +26,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.ktor:ktor-server-resources:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    implementation("com.auth0:java-jwt:3.18.2")
+
 
     // MongoDB
     implementation("org.mongodb:mongodb-driver-sync:4.9.1")
