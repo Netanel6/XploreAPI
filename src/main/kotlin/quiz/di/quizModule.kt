@@ -5,6 +5,7 @@ import org.netanel.quiz.repository.QuizRepository
 import org.netanel.quiz.repository.QuizRepositoryImpl
 import org.netanel.quiz.usecase.GetQuestionsUseCase
 import org.netanel.quiz.usecase.GetQuizUseCase
+import quiz.usecase.AddQuizUseCase
 import quiz.usecase.GetQuizListUseCase
 
 val quizModule = module {
@@ -12,4 +13,6 @@ val quizModule = module {
     factory { GetQuestionsUseCase(get()) }
     factory { GetQuizUseCase(get()) }
     factory { GetQuizListUseCase(get()) }
+    factory { AddQuizUseCase(get()) }
+
 }

@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 import org.bson.types.ObjectId
 import org.netanel.quiz.repository.model.Question
 import org.netanel.quiz.repository.model.Quiz
+import util.toBsonDocument
 import util.toKotlinObject
 
 class QuizRepositoryImpl(private val database: MongoDatabase): QuizRepository {
@@ -35,6 +36,14 @@ class QuizRepositoryImpl(private val database: MongoDatabase): QuizRepository {
             quizCollection.find()
                 .map { it.toKotlinObject<Quiz>(Quiz::class.java) }
                 .toList()
+        }
+    }
+
+    override suspend fun addQuiz(quiz: Quiz): Boolean {
+        val quizCollection = database.getCollection("quiz")
+        return withContext(Dispatchers.IO) {
+            val document = quiz.toBsonDocument()
+            quizCollection.insertOne(document).wasAcknowledged()
         }
     }
 }
