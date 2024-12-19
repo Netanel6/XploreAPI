@@ -78,8 +78,6 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
 
 
         authenticate("authJWT") {
-            // TODO: Add logic to android app and web side to send in the header the token
-
             get("/all") {
                 val users = getAllUsersUseCase.execute()
                 if (users?.isNotEmpty() == true) {
