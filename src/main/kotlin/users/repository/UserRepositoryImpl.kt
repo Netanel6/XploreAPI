@@ -62,7 +62,7 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
                 updatedQuizList.add(quiz)
 
                 // Convert the updated quiz list to BSON
-                val updatedQuizList Bson = updatedQuizList.map { it.toBsonDocument() }
+                val updatedQuizListBson = updatedQuizList.map { it.toBsonDocument() }
 
                 // Update the user document in the database
                 val update = Document("\$set", Document("quiz_list", updatedQuizListBson))
