@@ -11,12 +11,14 @@ import org.netanel.users.repository.model.User
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
+import users.usecase.UpdateUserUseCase
 import util.JwtConfig
 
 fun Route.userRoutes(jwtConfig: JwtConfig) {
     val getUserUseCase: GetUserUseCase = getKoin().get()
     val getAllUsersUseCase: GetAllUsersUseCase = getKoin().get()
     val addUserUseCase: AddUserUseCase = getKoin().get()
+    val updateUserUseCase: UpdateUserUseCase = getKoin().get()
 
     route("/users") {
         post {
@@ -76,9 +78,53 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
             }
         }
 
-
         authenticate("authJWT") {
-            // TODO: Add logic to android app and web side to send in the header the token
+            patch("{userId}/quizzes") {
+                val userId = call.parameters["userId"]
+                if (userId.isNullOrEmpty()) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ServerResponse.error("User ID is required", HttpStatusCode.BadRequest.value)
+                    )
+                    return@patch
+                }
+
+                try {
+                    // Receive Quiz object from the body
+                    val quiz = call.receive<User.Quiz>()
+
+                    if (quiz.id.isNullOrEmpty() || quiz.title.isNullOrEmpty()) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ServerResponse.error("Quiz ID and title are required", HttpStatusCode.BadRequest.value)
+                        )
+                        return@patch
+                    }
+
+                    // Call use case to update the user's quiz list
+                    val isUpdated = updateUserUseCase.execute(userId, quiz)
+
+                    if (isUpdated) {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            ServerResponse.success("Quiz successfully assigned", HttpStatusCode.OK.value)
+                        )
+                    } else {
+                        call.respond(
+                            HttpStatusCode.InternalServerError,
+                            ServerResponse.error("Failed to assign quiz", HttpStatusCode.InternalServerError.value)
+                        )
+                    }
+                } catch (e: Exception) {
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        ServerResponse.error("An error occurred: ${e.message}", HttpStatusCode.InternalServerError.value)
+                    )
+                }
+            }
+
+
+
 
             get("/all") {
                 val users = getAllUsersUseCase.execute()

@@ -7,9 +7,10 @@ import kotlinx.coroutines.withContext
 import org.bson.types.ObjectId
 import org.netanel.quiz.repository.model.Question
 import org.netanel.quiz.repository.model.Quiz
+import util.toBsonDocument
 import util.toKotlinObject
 
-class QuizRepositoryImpl(val database: MongoDatabase): QuizRepository {
+class QuizRepositoryImpl(private val database: MongoDatabase): QuizRepository {
 
 
     override suspend fun getQuestions(): List<Question> {
@@ -26,13 +27,23 @@ class QuizRepositoryImpl(val database: MongoDatabase): QuizRepository {
             val quizDocument = quizCollection.find(eq("_id", ObjectId(quizId))).firstOrNull() ?: return@withContext null
 
             val quiz = quizDocument.toKotlinObject<Quiz>(Quiz::class.java)
-
-            /* // Fetch associated questions from the database
-            val questionCollection = database.getCollection("test_questions")
-            val questions = questionCollection.find(eq("quizId", quizId))
-                .map { it.toKotlinObject<Question>(Question::class.java) }
-                .toList()*/
             quiz
+        }
+    }
+    override suspend fun getQuizList(): List<Quiz> {
+        val quizCollection = database.getCollection("quiz")
+        return withContext(Dispatchers.IO) {
+            quizCollection.find()
+                .map { it.toKotlinObject<Quiz>(Quiz::class.java) }
+                .toList()
+        }
+    }
+
+    override suspend fun addQuiz(quiz: Quiz): Boolean {
+        val quizCollection = database.getCollection("quiz")
+        return withContext(Dispatchers.IO) {
+            val document = quiz.toBsonDocument()
+            quizCollection.insertOne(document).wasAcknowledged()
         }
     }
 }
