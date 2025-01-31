@@ -11,14 +11,14 @@ import org.netanel.users.repository.model.User
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
-import users.usecase.UpdateUserUseCase
+import users.usecase.AssignQuizForUserUseCase
 import util.JwtConfig
 
 fun Route.userRoutes(jwtConfig: JwtConfig) {
     val getUserUseCase: GetUserUseCase = getKoin().get()
     val getAllUsersUseCase: GetAllUsersUseCase = getKoin().get()
     val addUserUseCase: AddUserUseCase = getKoin().get()
-    val updateUserUseCase: UpdateUserUseCase = getKoin().get()
+    val updateUserUseCase: AssignQuizForUserUseCase = getKoin().get()
 
     route("/users") {
         post {
