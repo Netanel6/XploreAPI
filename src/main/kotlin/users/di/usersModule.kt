@@ -6,7 +6,7 @@ import org.netanel.users.repository.UserRepositoryImpl
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
-import users.usecase.UpdateUserUseCase
+import users.usecase.AssignQuizForUserUseCase
 
 
 val usersModule = module {
@@ -14,5 +14,5 @@ val usersModule = module {
     factory { GetUserUseCase(get()) }
     factory { GetAllUsersUseCase(get()) }
     factory { AddUserUseCase(get()) }
-    factory { UpdateUserUseCase(get()) }
+    factory { AssignQuizForUserUseCase(get()) }
 }

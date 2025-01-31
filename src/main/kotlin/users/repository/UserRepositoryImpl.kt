@@ -44,8 +44,10 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
     override suspend fun addQuizToUser(userId: String, quiz: User.Quiz): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                // Find the user by id
+                // Create filter to find the user by id
                 val filter = Document("id", userId)
+
+                // Find the specific user in the users collection
                 val userDocument = collection.find(filter).firstOrNull()
 
                 if (userDocument == null) {
@@ -53,21 +55,19 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
                     return@withContext false
                 }
 
-                // Convert the document to User object
-                val user = userDocument.toKotlinObject<User>(User::class.java)
-                    ?: throw IllegalStateException("Failed to convert user document to User object")
+                // Add the quiz to the existing quiz list or initialize the list if it doesn't exist
+                val updatedQuizList = userDocument["quiz_list"]?.let {
+                    // If quiz_list exists, cast it to a mutable list and add the new quiz
+                    (it as List<Document>).toMutableList().apply {
+                        add(quiz.toBsonDocument())
+                    }
+                } ?: listOf(quiz.toBsonDocument()) // If quiz_list doesn't exist, initialize it with the new quiz
 
-                // Update the quiz list
-                val updatedQuizList = user.quiz_list.orEmpty().toMutableList()
-                updatedQuizList.add(quiz)
-
-                // Convert the updated quiz list to BSON
-                val updatedQuizListBson = updatedQuizList.map { it.toBsonDocument() }
-
-                // Update the user document in the database
-                val update = Document("\$set", Document("quiz_list", updatedQuizListBson))
+                // Update the user document in the database with the new quiz list
+                val update = Document("\$set", Document("quiz_list", updatedQuizList))
                 val result = collection.updateOne(filter, update)
 
+                // Return true if the user document was successfully updated
                 result.modifiedCount > 0
             } catch (e: Exception) {
                 e.printStackTrace()
