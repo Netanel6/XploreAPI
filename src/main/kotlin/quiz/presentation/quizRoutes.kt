@@ -55,7 +55,7 @@ fun Route.quizRoutes() {
             }
         }
 
-        get("{quizId}") {
+        get("/quiz/{quizId}") {
             val quizId = call.parameters["quizId"]
             if (quizId == null || !ObjectId.isValid(quizId)) {
                 call.respond(HttpStatusCode.BadRequest, "Invalid Quiz ID")

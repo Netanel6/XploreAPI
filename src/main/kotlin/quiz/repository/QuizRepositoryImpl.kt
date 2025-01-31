@@ -27,7 +27,6 @@ class QuizRepositoryImpl(private val database: MongoDatabase) : QuizRepository {
         val quizCollection = database.getCollection("quiz")
         return withContext(Dispatchers.IO) {
             val quizDocument = quizCollection.find(eq("_id", ObjectId(quizId))).firstOrNull() ?: return@withContext null
-
             val quiz = quizDocument.toKotlinObject<Quiz>(Quiz::class.java)
             quiz
         }
@@ -47,7 +46,7 @@ class QuizRepositoryImpl(private val database: MongoDatabase) : QuizRepository {
 
         return withContext(Dispatchers.IO) {
 
-            val userDocument = userCollection.find(Document("token", userId)).firstOrNull()
+            val userDocument = userCollection.find(Document("id", userId)).firstOrNull()
             if (userDocument == null) {
                 println("User not found with ID: $userId")
                 return@withContext emptyList()
