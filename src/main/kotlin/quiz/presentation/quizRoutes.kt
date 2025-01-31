@@ -10,6 +10,7 @@ import org.bson.types.ObjectId
 import org.koin.java.KoinJavaComponent.getKoin
 import org.netanel.quiz.repository.model.Quiz
 import org.netanel.quiz.usecase.GetQuestionsUseCase
+import org.netanel.quiz.usecase.GetQuizListForUserUseCase
 import org.netanel.quiz.usecase.GetQuizUseCase
 import quiz.usecase.AddQuizUseCase
 import quiz.usecase.GetQuizListUseCase
@@ -17,6 +18,7 @@ import quiz.usecase.GetQuizListUseCase
 fun Route.quizRoutes() {
     val getQuestionsUseCase: GetQuestionsUseCase = getKoin().get()
     val getQuizListUseCase: GetQuizListUseCase = getKoin().get()
+    val getQuizListForUserUseCase: GetQuizListForUserUseCase = getKoin().get()
     val getQuizUseCase: GetQuizUseCase = getKoin().get()
     val addQuizUseCase: AddQuizUseCase = getKoin().get()
 
@@ -24,6 +26,25 @@ fun Route.quizRoutes() {
         get("/all") {
             try {
                 val quizzes = getQuizListUseCase.execute()
+                call.respond(HttpStatusCode.OK, ServerResponse.success(quizzes, HttpStatusCode.OK.value))
+            } catch (e: Exception) {
+                application.log.error("Error fetching quiz list", e)
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ServerResponse.error("Failed to fetch quiz list", HttpStatusCode.InternalServerError.value)
+                )
+            }
+        }
+
+        get("/{userId}") {
+            try {
+                val userId = call.parameters["userId"]
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid Quiz ID")
+                    return@get
+                }
+
+                val quizzes = getQuizListForUserUseCase.execute(userId)
                 call.respond(HttpStatusCode.OK, ServerResponse.success(quizzes, HttpStatusCode.OK.value))
             } catch (e: Exception) {
                 application.log.error("Error fetching quiz list", e)
