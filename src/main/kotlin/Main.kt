@@ -45,13 +45,15 @@ fun Application.module() {
     // Install Content Negotiation
     install(ContentNegotiation) { json() }
 
+    configureCORS()
     // Install CORS to handle cross-origin requests
-    install(CORS) {
+   /* install(CORS) {
         anyHost()
+        allowHost("localhost:3000") // Allow requests from React app
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
     }
-
+*/
     // Routing
     routing {
         // Root Endpoint
@@ -63,5 +65,25 @@ fun Application.module() {
         authenticate("authJWT") {
             quizRoutes()
         }
+    }
+}
+
+fun Application.configureCORS() {
+    install(CORS) {
+        allowHost("xplore-653a16181c0e.herokuapp.com", schemes = listOf("https")) // Production URL
+        allowHost("10.0.2.2:8080") // Android Emulator
+        allowHost("localhost:3000") // Web frontend (React)
+
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Put)
+
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.Accept)
+
+        allowCredentials = true // Allow cookies or authentication headers
     }
 }
