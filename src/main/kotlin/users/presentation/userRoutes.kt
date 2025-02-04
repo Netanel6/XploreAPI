@@ -14,6 +14,7 @@ import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
 import users.usecase.AssignQuizForUserUseCase
+import users.usecase.DeleteQuizForUserUseCase
 import util.JwtConfig
 
 fun Route.userRoutes(jwtConfig: JwtConfig) {
@@ -21,8 +22,9 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
     val getAllUsersUseCase: GetAllUsersUseCase = getKoin().get()
     val addUserUseCase: AddUserUseCase = getKoin().get()
     val editUserUseCase: EditUserUseCase = getKoin().get()
-    val deleteUserUseCase: DeleteUserUseCase = getKoin().get()
     val updateUserUseCase: AssignQuizForUserUseCase = getKoin().get()
+    val deleteQuizForUserUseCase: DeleteQuizForUserUseCase = getKoin().get()
+    val deleteUserUseCase: DeleteUserUseCase = getKoin().get()
 
     route("/users") {
         post {
@@ -156,6 +158,23 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                     call.respond(HttpStatusCode.OK, ServerResponse.success("User deleted successfully", HttpStatusCode.OK.value))
                 } else {
                     call.respond(HttpStatusCode.NotFound, ServerResponse.error("User not found", HttpStatusCode.NotFound.value))
+                }
+            }
+
+            delete("{userId}/quizzes/{quizId}") {
+                val userId = call.parameters["userId"]
+                val quizId = call.parameters["quizId"]
+
+                if (userId.isNullOrEmpty() || quizId.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, ServerResponse.error("User ID and Quiz ID are required", HttpStatusCode.BadRequest.value))
+                    return@delete
+                }
+
+                val removed = deleteQuizForUserUseCase.execute(userId, quizId)
+                if (removed) {
+                    call.respond(HttpStatusCode.OK, ServerResponse.success("Quiz removed from user successfully", HttpStatusCode.OK.value))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, ServerResponse.error("Quiz or user not found", HttpStatusCode.NotFound.value))
                 }
             }
 

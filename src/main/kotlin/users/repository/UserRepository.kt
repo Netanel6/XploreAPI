@@ -9,4 +9,5 @@ interface UserRepository {
     suspend fun editUser(userId: String, updatedUser: User): Boolean
     suspend fun deleteUser(userId: String): Boolean
     suspend fun addQuizToUser(userId: String, quiz: User.Quiz): Boolean
+    suspend fun deleteQuizForUser(userId: String, quizId: String): Boolean
 }

@@ -9,6 +9,7 @@ import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
 import users.usecase.AssignQuizForUserUseCase
+import users.usecase.DeleteQuizForUserUseCase
 
 
 val usersModule = module {
@@ -19,4 +20,5 @@ val usersModule = module {
     factory { EditUserUseCase(get()) }
     factory { DeleteUserUseCase(get()) }
     factory { AssignQuizForUserUseCase(get()) }
+    factory { DeleteQuizForUserUseCase(get()) }
 }

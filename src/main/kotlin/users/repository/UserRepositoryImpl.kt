@@ -51,7 +51,8 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
                 e.printStackTrace()
                 false
             }
-        }    }
+        }
+    }
 
     override suspend fun deleteUser(userId: String): Boolean {
         return withContext(Dispatchers.IO) {
@@ -82,6 +83,34 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
                 } ?: listOf(quiz.toBsonDocument())
                 val update = Document("\$set", Document("quiz_list", updatedQuizList))
                 val result = collection.updateOne(filter, update)
+                result.modifiedCount > 0
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
+    override suspend fun deleteQuizForUser(userId: String, quizId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val filter = Document("id", userId)
+                val userDocument = collection.find(filter).firstOrNull()
+
+                if (userDocument == null) {
+                    println("User not found with ID: $userId")
+                    return@withContext false
+                }
+
+                val updatedQuizList = userDocument["quiz_list"]?.let {
+                    (it as List<Document>).filterNot { quiz ->
+                        quiz.getString("id") == quizId
+                    }
+                } ?: emptyList<Document>()
+
+                val update = Document("\$set", Document("quiz_list", updatedQuizList))
+                val result = collection.updateOne(filter, update)
+
                 result.modifiedCount > 0
             } catch (e: Exception) {
                 e.printStackTrace()
