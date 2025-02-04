@@ -40,6 +40,19 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
         }
     }
 
+    override suspend fun editUser(userId: String, updatedUser: User): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val filter = Document("id", userId)
+                val update = Document("\$set", updatedUser.toBsonDocument())
+                val result = collection.updateOne(filter, update)
+                result.modifiedCount > 0
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }    }
+
     override suspend fun deleteUser(userId: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {

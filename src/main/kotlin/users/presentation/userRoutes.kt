@@ -9,6 +9,7 @@ import model.ServerResponse
 import org.koin.java.KoinJavaComponent.getKoin
 import org.netanel.users.repository.model.User
 import org.netanel.users.usecase.DeleteUserUseCase
+import org.netanel.users.usecase.EditUserUseCase
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
@@ -19,6 +20,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
     val getUserUseCase: GetUserUseCase = getKoin().get()
     val getAllUsersUseCase: GetAllUsersUseCase = getKoin().get()
     val addUserUseCase: AddUserUseCase = getKoin().get()
+    val editUserUseCase: EditUserUseCase = getKoin().get()
     val deleteUserUseCase: DeleteUserUseCase = getKoin().get()
     val updateUserUseCase: AssignQuizForUserUseCase = getKoin().get()
 
@@ -56,6 +58,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                 )
             }
         }
+
         get("{phoneNumber}") {
             val phoneNumber = call.parameters["phoneNumber"]
             if (phoneNumber.isNullOrEmpty()) {
@@ -121,6 +124,23 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                         HttpStatusCode.InternalServerError,
                         ServerResponse.error("An error occurred: ${e.message}", HttpStatusCode.InternalServerError.value)
                     )
+                }
+            }
+
+            put("{userId}") {
+                val userId = call.parameters["userId"]
+                val updatedUser = call.receive<User>()
+
+                if (userId.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, ServerResponse.error("User ID is required", HttpStatusCode.BadRequest.value))
+                    return@put
+                }
+
+                val updated = editUserUseCase.execute(userId, updatedUser)
+                if (updated) {
+                    call.respond(HttpStatusCode.OK, ServerResponse.success("User updated successfully", HttpStatusCode.OK.value))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, ServerResponse.error("User not found", HttpStatusCode.NotFound.value))
                 }
             }
 
