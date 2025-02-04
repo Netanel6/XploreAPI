@@ -28,7 +28,6 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
         }
     }
 
-
     override suspend fun addUser(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             try {
@@ -41,34 +40,12 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
         }
     }
 
-    override suspend fun addQuizToUser(userId: String, quiz: User.Quiz): Boolean {
+    override suspend fun deleteUser(userId: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                // Create filter to find the user by id
                 val filter = Document("id", userId)
-
-                // Find the specific user in the users collection
-                val userDocument = collection.find(filter).firstOrNull()
-
-                if (userDocument == null) {
-                    println("User not found with ID: $userId")
-                    return@withContext false
-                }
-
-                // Add the quiz to the existing quiz list or initialize the list if it doesn't exist
-                val updatedQuizList = userDocument["quiz_list"]?.let {
-                    // If quiz_list exists, cast it to a mutable list and add the new quiz
-                    (it as List<Document>).toMutableList().apply {
-                        add(quiz.toBsonDocument())
-                    }
-                } ?: listOf(quiz.toBsonDocument()) // If quiz_list doesn't exist, initialize it with the new quiz
-
-                // Update the user document in the database with the new quiz list
-                val update = Document("\$set", Document("quiz_list", updatedQuizList))
-                val result = collection.updateOne(filter, update)
-
-                // Return true if the user document was successfully updated
-                result.modifiedCount > 0
+                val result = collection.deleteOne(filter)
+                result.deletedCount > 0
             } catch (e: Exception) {
                 e.printStackTrace()
                 false
@@ -76,4 +53,27 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
         }
     }
 
+    override suspend fun addQuizToUser(userId: String, quiz: User.Quiz): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val filter = Document("id", userId)
+                val userDocument = collection.find(filter).firstOrNull()
+                if (userDocument == null) {
+                    println("User not found with ID: $userId")
+                    return@withContext false
+                }
+                val updatedQuizList = userDocument["quiz_list"]?.let {
+                    (it as List<Document>).toMutableList().apply {
+                        add(quiz.toBsonDocument())
+                    }
+                } ?: listOf(quiz.toBsonDocument())
+                val update = Document("\$set", Document("quiz_list", updatedQuizList))
+                val result = collection.updateOne(filter, update)
+                result.modifiedCount > 0
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
 }

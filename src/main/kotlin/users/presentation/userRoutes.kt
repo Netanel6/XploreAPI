@@ -8,6 +8,7 @@ import io.ktor.server.routing.*
 import model.ServerResponse
 import org.koin.java.KoinJavaComponent.getKoin
 import org.netanel.users.repository.model.User
+import org.netanel.users.usecase.DeleteUserUseCase
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
@@ -18,6 +19,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
     val getUserUseCase: GetUserUseCase = getKoin().get()
     val getAllUsersUseCase: GetAllUsersUseCase = getKoin().get()
     val addUserUseCase: AddUserUseCase = getKoin().get()
+    val deleteUserUseCase: DeleteUserUseCase = getKoin().get()
     val updateUserUseCase: AssignQuizForUserUseCase = getKoin().get()
 
     route("/users") {
@@ -101,7 +103,6 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                         return@patch
                     }
 
-                    // Call use case to update the user's quiz list
                     val isUpdated = updateUserUseCase.execute(userId, quiz)
 
                     if (isUpdated) {
@@ -123,7 +124,20 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                 }
             }
 
+            delete("{userId}") {
+                val userId = call.parameters["userId"]
+                if (userId.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, ServerResponse.error("User ID is required", HttpStatusCode.BadRequest.value))
+                    return@delete
+                }
 
+                val deleted = deleteUserUseCase.execute(userId)
+                if (deleted) {
+                    call.respond(HttpStatusCode.OK, ServerResponse.success("User deleted successfully", HttpStatusCode.OK.value))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, ServerResponse.error("User not found", HttpStatusCode.NotFound.value))
+                }
+            }
 
 
             get("/all") {
