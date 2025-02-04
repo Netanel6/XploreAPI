@@ -8,17 +8,23 @@ import io.ktor.server.routing.*
 import model.ServerResponse
 import org.koin.java.KoinJavaComponent.getKoin
 import org.netanel.users.repository.model.User
+import org.netanel.users.usecase.DeleteUserUseCase
+import org.netanel.users.usecase.EditUserUseCase
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
 import users.usecase.GetAllUsersUseCase
 import users.usecase.AssignQuizForUserUseCase
+import users.usecase.DeleteQuizForUserUseCase
 import util.JwtConfig
 
 fun Route.userRoutes(jwtConfig: JwtConfig) {
     val getUserUseCase: GetUserUseCase = getKoin().get()
     val getAllUsersUseCase: GetAllUsersUseCase = getKoin().get()
     val addUserUseCase: AddUserUseCase = getKoin().get()
+    val editUserUseCase: EditUserUseCase = getKoin().get()
     val updateUserUseCase: AssignQuizForUserUseCase = getKoin().get()
+    val deleteQuizForUserUseCase: DeleteQuizForUserUseCase = getKoin().get()
+    val deleteUserUseCase: DeleteUserUseCase = getKoin().get()
 
     route("/users") {
         post {
@@ -54,6 +60,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                 )
             }
         }
+
         get("{phoneNumber}") {
             val phoneNumber = call.parameters["phoneNumber"]
             if (phoneNumber.isNullOrEmpty()) {
@@ -101,7 +108,6 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                         return@patch
                     }
 
-                    // Call use case to update the user's quiz list
                     val isUpdated = updateUserUseCase.execute(userId, quiz)
 
                     if (isUpdated) {
@@ -123,7 +129,54 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                 }
             }
 
+            put("{userId}") {
+                val userId = call.parameters["userId"]
+                val updatedUser = call.receive<User>()
 
+                if (userId.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, ServerResponse.error("User ID is required", HttpStatusCode.BadRequest.value))
+                    return@put
+                }
+
+                val updated = editUserUseCase.execute(userId, updatedUser)
+                if (updated) {
+                    call.respond(HttpStatusCode.OK, ServerResponse.success("User updated successfully", HttpStatusCode.OK.value))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, ServerResponse.error("User not found", HttpStatusCode.NotFound.value))
+                }
+            }
+
+            delete("{userId}") {
+                val userId = call.parameters["userId"]
+                if (userId.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, ServerResponse.error("User ID is required", HttpStatusCode.BadRequest.value))
+                    return@delete
+                }
+
+                val deleted = deleteUserUseCase.execute(userId)
+                if (deleted) {
+                    call.respond(HttpStatusCode.OK, ServerResponse.success("User deleted successfully", HttpStatusCode.OK.value))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, ServerResponse.error("User not found", HttpStatusCode.NotFound.value))
+                }
+            }
+
+            delete("{userId}/quizzes/{quizId}") {
+                val userId = call.parameters["userId"]
+                val quizId = call.parameters["quizId"]
+
+                if (userId.isNullOrEmpty() || quizId.isNullOrEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, ServerResponse.error("User ID and Quiz ID are required", HttpStatusCode.BadRequest.value))
+                    return@delete
+                }
+
+                val removed = deleteQuizForUserUseCase.execute(userId, quizId)
+                if (removed) {
+                    call.respond(HttpStatusCode.OK, ServerResponse.success("Quiz removed from user successfully", HttpStatusCode.OK.value))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, ServerResponse.error("Quiz or user not found", HttpStatusCode.NotFound.value))
+                }
+            }
 
 
             get("/all") {
