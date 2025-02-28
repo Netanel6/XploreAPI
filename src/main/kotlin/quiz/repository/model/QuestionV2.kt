@@ -13,10 +13,9 @@ data class QuestionV2(
     val points: Int,
     val type: QuestionType? = null,
     val difficulty: DifficultyLevel,
-    val isMandatory: Boolean? = null
 ) {
     @Serializable
     enum class QuestionType {
-        American, TrueOrFalse, FillInTheBlank
+        American, TrueOrFalse
     }
 }
