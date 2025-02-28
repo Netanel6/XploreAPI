@@ -14,5 +14,6 @@ data class Quiz(
     val answerLockTimer: Int,
     val title: String? = null,
     val creatorId: String? = null,
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    var totalScore: Int = 0
 )
