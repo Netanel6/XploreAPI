@@ -73,7 +73,7 @@ fun Route.quizRoutes() {
             }
         }
 
-        post {
+        post("/quiz") {
             try {
                 val quiz = call.receive<Quiz>()
                 val result = addQuizUseCase.execute(quiz)
