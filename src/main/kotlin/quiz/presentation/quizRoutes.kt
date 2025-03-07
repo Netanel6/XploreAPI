@@ -9,6 +9,7 @@ import model.ServerResponse
 import org.bson.types.ObjectId
 import org.koin.java.KoinJavaComponent.getKoin
 import org.netanel.quiz.repository.model.Quiz
+import org.netanel.quiz.usecase.EditQuizUseCase
 import org.netanel.quiz.usecase.GetQuestionsUseCase
 import org.netanel.quiz.usecase.GetQuizListForUserUseCase
 import org.netanel.quiz.usecase.GetQuizUseCase
@@ -21,6 +22,7 @@ fun Route.quizRoutes() {
     val getQuizListForUserUseCase: GetQuizListForUserUseCase = getKoin().get()
     val getQuizUseCase: GetQuizUseCase = getKoin().get()
     val addQuizUseCase: AddQuizUseCase = getKoin().get()
+    val editQuizUseCase: EditQuizUseCase = getKoin().get()
 
     route("/quizzes") {
         get("/all") {
@@ -73,7 +75,31 @@ fun Route.quizRoutes() {
             }
         }
 
-        post {
+        put("/quiz/{quizId}") {
+            val quizId = call.parameters["quizId"]
+            val updatedQuiz = call.receive<Quiz>()
+
+            if (quizId.isNullOrEmpty()) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ServerResponse.error("Quiz ID is required", HttpStatusCode.BadRequest.value)
+                )
+                return@put
+            }
+
+            val updated = editQuizUseCase.execute(quizId, updatedQuiz)
+            updated?.let {
+                call.respond(
+                    HttpStatusCode.OK,
+                    ServerResponse.success("Quiz updated successfully", HttpStatusCode.OK.value)
+                )
+            } ?: call.respond(
+                HttpStatusCode.NotFound,
+                ServerResponse.error("Quiz not found", HttpStatusCode.NotFound.value)
+            )
+        }
+
+        post("/quiz") {
             try {
                 val quiz = call.receive<Quiz>()
                 val result = addQuizUseCase.execute(quiz)

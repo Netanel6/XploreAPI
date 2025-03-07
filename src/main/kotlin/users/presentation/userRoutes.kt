@@ -100,7 +100,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                     // Receive Quiz object from the body
                     val quiz = call.receive<User.Quiz>()
 
-                    if (quiz.id.isNullOrEmpty() || quiz.title.isNullOrEmpty()) {
+                    if (quiz.id.isEmpty()) {
                         call.respond(
                             HttpStatusCode.BadRequest,
                             ServerResponse.error("Quiz ID and title are required", HttpStatusCode.BadRequest.value)
