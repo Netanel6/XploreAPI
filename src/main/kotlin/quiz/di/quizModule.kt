@@ -3,6 +3,7 @@ package org.netanel.quiz.di
 import org.koin.dsl.module
 import org.netanel.quiz.repository.QuizRepository
 import org.netanel.quiz.repository.QuizRepositoryImpl
+import org.netanel.quiz.usecase.EditQuizUseCase
 import org.netanel.quiz.usecase.GetQuestionsUseCase
 import org.netanel.quiz.usecase.GetQuizListForUserUseCase
 import org.netanel.quiz.usecase.GetQuizUseCase
@@ -16,5 +17,6 @@ val quizModule = module {
     factory { GetQuizListUseCase(get()) }
     factory { GetQuizListForUserUseCase(get()) }
     factory { AddQuizUseCase(get()) }
+    factory { EditQuizUseCase(get()) }
 
 }

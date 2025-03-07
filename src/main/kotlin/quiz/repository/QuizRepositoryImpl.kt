@@ -14,7 +14,6 @@ import util.toKotlinObject
 
 class QuizRepositoryImpl(private val database: MongoDatabase) : QuizRepository {
 
-
     override suspend fun getQuestions(): List<Question> {
         val collection = database.getCollection("test_questions")
         return withContext(Dispatchers.IO) {
@@ -41,8 +40,22 @@ class QuizRepositoryImpl(private val database: MongoDatabase) : QuizRepository {
         }
     }
 
+    override suspend fun editQuiz(quizId: String, updatedQuiz: Quiz): Boolean? {
+        val quizCollection = database.getCollection("quiz")
+        return withContext(Dispatchers.IO) {
+            try {
+                val filter = quizCollection.find(eq("_id", ObjectId(quizId))).firstOrNull() ?: return@withContext null
+                val update = Document("\$set", updatedQuiz.toBsonDocument())
+                quizCollection.updateOne(filter, update).wasAcknowledged()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
     override suspend fun getQuizFoListForUser(userId: String): List<User.Quiz> {
-        val userCollection = database.getCollection("users") // Fetch from "users" collection
+        val userCollection = database.getCollection("users")
 
         return withContext(Dispatchers.IO) {
 
@@ -53,7 +66,7 @@ class QuizRepositoryImpl(private val database: MongoDatabase) : QuizRepository {
             }
 
             val quizList = userDocument.getList("quiz_list", Document::class.java)
-                .mapNotNull { it.toKotlinObject<User.Quiz>(User.Quiz::class.java) } // Convert BSON to Kotlin objects
+                .mapNotNull { it.toKotlinObject<User.Quiz>(User.Quiz::class.java) }
 
             return@withContext quizList
         }

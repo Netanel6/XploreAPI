@@ -8,6 +8,7 @@ interface QuizRepository {
     suspend fun getQuestions(): List<Question>
     suspend fun getQuiz(quizId: String): Quiz?
     suspend fun getQuizList(): List<Quiz>
+    suspend fun editQuiz(quizId: String, updatedQuiz: Quiz): Boolean?
     suspend fun getQuizFoListForUser(userId: String): List<User.Quiz>
     suspend fun addQuiz(quiz: Quiz): Boolean
 }
