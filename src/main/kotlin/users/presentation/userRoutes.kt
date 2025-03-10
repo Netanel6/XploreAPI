@@ -12,9 +12,9 @@ import org.netanel.users.usecase.DeleteUserUseCase
 import org.netanel.users.usecase.EditUserUseCase
 import org.netanel.users.usecase.GetUserUseCase
 import users.usecase.AddUserUseCase
-import users.usecase.GetAllUsersUseCase
 import users.usecase.AssignQuizForUserUseCase
 import users.usecase.DeleteQuizForUserUseCase
+import users.usecase.GetAllUsersUseCase
 import util.JwtConfig
 
 fun Route.userRoutes(jwtConfig: JwtConfig) {
@@ -97,28 +97,28 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                 }
 
                 try {
-                    // Receive Quiz object from the body
-                    val quiz = call.receive<User.Quiz>()
+                    // Receive list of Quiz objects from the body
+                    val quizzes = call.receive<List<User.Quiz>>()
 
-                    if (quiz.id.isEmpty()) {
+                    if (quizzes.isEmpty()) {
                         call.respond(
                             HttpStatusCode.BadRequest,
-                            ServerResponse.error("Quiz ID and title are required", HttpStatusCode.BadRequest.value)
+                            ServerResponse.error("At least one quiz must be provided", HttpStatusCode.BadRequest.value)
                         )
                         return@patch
                     }
 
-                    val isUpdated = updateUserUseCase.execute(userId, quiz)
+                    val isUpdated = updateUserUseCase.execute(userId, quizzes)
 
                     if (isUpdated) {
                         call.respond(
                             HttpStatusCode.OK,
-                            ServerResponse.success("Quiz successfully assigned", HttpStatusCode.OK.value)
+                            ServerResponse.success("Quizzes successfully assigned", HttpStatusCode.OK.value)
                         )
                     } else {
                         call.respond(
                             HttpStatusCode.InternalServerError,
-                            ServerResponse.error("Failed to assign quiz", HttpStatusCode.InternalServerError.value)
+                            ServerResponse.error("Failed to assign quizzes", HttpStatusCode.InternalServerError.value)
                         )
                     }
                 } catch (e: Exception) {
@@ -128,6 +128,7 @@ fun Route.userRoutes(jwtConfig: JwtConfig) {
                     )
                 }
             }
+
 
             put("{userId}") {
                 val userId = call.parameters["userId"]
