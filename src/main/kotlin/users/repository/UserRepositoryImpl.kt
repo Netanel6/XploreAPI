@@ -4,7 +4,6 @@ import com.mongodb.client.MongoDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bson.Document
-import org.bson.types.ObjectId
 import org.netanel.users.repository.model.User
 import util.toBsonDocument
 import util.toKotlinObject
@@ -67,7 +66,7 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
         }
     }
 
-    override suspend fun addQuizToUser(userId: String, quiz: User.Quiz): Boolean {
+    override suspend fun addQuizToUser(userId: String, quizzes: List<User.Quiz>): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val filter = Document("id", userId)
@@ -76,11 +75,10 @@ class UserRepositoryImpl(val database: MongoDatabase) : UserRepository {
                     println("User not found with ID: $userId")
                     return@withContext false
                 }
-                val updatedQuizList = userDocument["quiz_list"]?.let {
-                    (it as List<Document>).toMutableList().apply {
-                        add(quiz.toBsonDocument())
-                    }
-                } ?: listOf(quiz.toBsonDocument())
+                val existingQuizzes = userDocument["quiz_list"] as? List<Document> ?: emptyList()
+                val updatedQuizList = existingQuizzes.toMutableList().apply {
+                    addAll(quizzes.map { it.toBsonDocument() })
+                }
                 val update = Document("\$set", Document("quiz_list", updatedQuizList))
                 val result = collection.updateOne(filter, update)
                 result.modifiedCount > 0

@@ -8,6 +8,6 @@ interface UserRepository {
     suspend fun addUser(user: User): Boolean
     suspend fun editUser(userId: String, updatedUser: User): Boolean
     suspend fun deleteUser(userId: String): Boolean
-    suspend fun addQuizToUser(userId: String, quiz: User.Quiz): Boolean
+    suspend fun addQuizToUser(userId: String, quizzes: List<User.Quiz>): Boolean
     suspend fun deleteQuizForUser(userId: String, quizId: String): Boolean
 }
