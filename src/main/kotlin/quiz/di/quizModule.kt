@@ -9,6 +9,7 @@ import org.netanel.quiz.usecase.GetQuizListForUserUseCase
 import org.netanel.quiz.usecase.GetQuizUseCase
 import quiz.usecase.AddQuizUseCase
 import quiz.usecase.GetQuizListUseCase
+import quiz.usecase.UpdateScoreUseCase
 
 val quizModule = module {
     single<QuizRepository> { QuizRepositoryImpl(get()) }
@@ -18,5 +19,5 @@ val quizModule = module {
     factory { GetQuizListForUserUseCase(get()) }
     factory { AddQuizUseCase(get()) }
     factory { EditQuizUseCase(get()) }
-
+    factory { UpdateScoreUseCase(get()) }
 }
