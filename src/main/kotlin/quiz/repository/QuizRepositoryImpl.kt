@@ -9,6 +9,7 @@ import org.bson.types.ObjectId
 import org.netanel.quiz.repository.model.Question
 import org.netanel.quiz.repository.model.Quiz
 import org.netanel.users.repository.model.User
+import quiz.repository.model.UpdateScoreRequest
 import util.toBsonDocument
 import util.toKotlinObject
 
@@ -79,5 +80,29 @@ class QuizRepositoryImpl(private val database: MongoDatabase) : QuizRepository {
             val document = quiz.toBsonDocument()
             quizCollection.insertOne(document).wasAcknowledged()
         }
+    }
+
+    override suspend fun updateScore(quizId: String, updateScore: UpdateScoreRequest): Quiz? {
+        val collection = database.getCollection("quiz")
+
+        val filter = Document("_id", ObjectId(quizId))
+        val quizDocument = collection.find(filter).firstOrNull() ?: return null
+
+        val scoreBoard = quizDocument.get("scoreBoard", Document::class.java)
+        val scoresList = scoreBoard?.getList("scores", Document::class.java) ?: mutableListOf()
+
+        val updated = scoresList.map {
+            if (it.getString("id") == updateScore.userId) {
+                it["score"] = updateScore.score
+            }
+            it
+        }
+
+        scoreBoard["scores"] = updated
+
+        val update = Document("\$set", Document("scoreBoard", scoreBoard))
+        collection.updateOne(filter, update)
+
+        return collection.find(filter).firstOrNull()?.toKotlinObject(Quiz::class.java)
     }
 }

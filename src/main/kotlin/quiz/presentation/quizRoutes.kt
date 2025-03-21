@@ -13,8 +13,10 @@ import org.netanel.quiz.usecase.EditQuizUseCase
 import org.netanel.quiz.usecase.GetQuestionsUseCase
 import org.netanel.quiz.usecase.GetQuizListForUserUseCase
 import org.netanel.quiz.usecase.GetQuizUseCase
+import quiz.repository.model.UpdateScoreRequest
 import quiz.usecase.AddQuizUseCase
 import quiz.usecase.GetQuizListUseCase
+import quiz.usecase.UpdateScoreUseCase
 
 fun Route.quizRoutes() {
     val getQuestionsUseCase: GetQuestionsUseCase = getKoin().get()
@@ -23,6 +25,7 @@ fun Route.quizRoutes() {
     val getQuizUseCase: GetQuizUseCase = getKoin().get()
     val addQuizUseCase: AddQuizUseCase = getKoin().get()
     val editQuizUseCase: EditQuizUseCase = getKoin().get()
+    val updateScoreUseCase: UpdateScoreUseCase = getKoin().get()
 
     route("/quizzes") {
         get("/all") {
@@ -93,6 +96,24 @@ fun Route.quizRoutes() {
                     HttpStatusCode.OK,
                     ServerResponse.success("Quiz updated successfully", HttpStatusCode.OK.value)
                 )
+            } ?: call.respond(
+                HttpStatusCode.NotFound,
+                ServerResponse.error("Quiz not found", HttpStatusCode.NotFound.value)
+            )
+        }
+
+        patch("/quiz/{quizId}/scores") {
+            val quizId = call.parameters["quizId"]
+            if (quizId == null || !ObjectId.isValid(quizId)) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid Quiz ID")
+                return@patch
+            }
+
+            val updateScoreRequest = call.receive<UpdateScoreRequest>()
+            val updatedQuiz = updateScoreUseCase.execute(quizId, updateScoreRequest)
+
+            updatedQuiz?.let {
+                call.respond(HttpStatusCode.OK, ServerResponse.success(it, HttpStatusCode.OK.value))
             } ?: call.respond(
                 HttpStatusCode.NotFound,
                 ServerResponse.error("Quiz not found", HttpStatusCode.NotFound.value)
