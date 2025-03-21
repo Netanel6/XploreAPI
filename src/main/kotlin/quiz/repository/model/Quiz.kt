@@ -14,5 +14,13 @@ data class Quiz(
     val title: String? = null,
     val creatorId: String? = null,
     val isActive: Boolean = true,
-    var totalScore: Int = 0
-)
+    var totalScore: Int = 0,
+    var currentScore: Int = 0,
+    var scoreBoard: ScoreBoard? = null
+) {
+    @Serializable
+    data class ScoreBoard(val scores: List<Score>) {
+        @Serializable
+        data class Score(val id: String, val userName: String, val score: Int)
+    }
+}
