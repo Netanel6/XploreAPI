@@ -11,7 +11,7 @@ import javax.net.ssl.SSLContext
 object MongoDBClient {
     fun createDatabase(): MongoDatabase {
         val connectionString: String = EnvironmentConfig.get("MONGODB_URI", "mongodb://localhost")
-        val enableSsl: Boolean = EnvironmentConfig.getBoolean("ENABLE_SSL", true)
+        val enableSsl: Boolean = EnvironmentConfig.getBoolean("ENABLE_SSL", false       )
 
         val builder = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))

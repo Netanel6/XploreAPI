@@ -1,6 +1,7 @@
 package util
 
 import io.github.cdimascio.dotenv.Dotenv
+import org.koin.core.logger.Logger
 
 object EnvironmentConfig {
     private val dotenv: Dotenv = Dotenv.configure()
@@ -9,13 +10,15 @@ object EnvironmentConfig {
         .load()
 
     fun get(key: String, defaultValue: String? = null): String {
-        return dotenv[key] ?: System.getenv(key) ?: defaultValue
+        return dotenv[key]
+            ?: System.getenv(key)
+            ?: defaultValue
             ?: throw IllegalArgumentException("Environment variable '$key' is not set.")
     }
 
     fun getBoolean(key: String, defaultValue: Boolean = false): Boolean {
-        return dotenv[key]?.toBooleanStrictOrNull()
-            ?: System.getenv(key)?.toBooleanStrictOrNull()
+        return dotenv[key]?.equals("true", ignoreCase = true)
+            ?: System.getenv(key)?.equals("true", ignoreCase = true)
             ?: defaultValue
     }
 
