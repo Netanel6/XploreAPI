@@ -11,22 +11,21 @@ import javax.net.ssl.SSLContext
 object MongoDBClient {
     fun createDatabase(): MongoDatabase {
         val connectionString: String = EnvironmentConfig.get("MONGODB_URI", "mongodb://localhost")
-        val enableSsl: Boolean = EnvironmentConfig.getBoolean("ENABLE_SSL", false)
+        val enableSsl: Boolean = EnvironmentConfig.getBoolean("ENABLE_SSL", true)
 
-        val sslContext: SSLContext = SSLContext.getInstance("TLS").apply {
-            init(null, arrayOf(TrustAllCertificates()), java.security.SecureRandom())
-        }
-
-        val settings: MongoClientSettings = MongoClientSettings.builder()
+        val builder = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
-            .applyToSslSettings {
-                it.enabled(enableSsl)
-                if (!enableSsl) {
-                    it.context(sslContext)
+            .applyToSslSettings { ssl ->
+                ssl.enabled(enableSsl)
+                if (enableSsl) {
+                    val sslContext = SSLContext.getInstance("TLS").apply {
+                        init(null, arrayOf(TrustAllCertificates()), java.security.SecureRandom())
+                    }
+                    ssl.context(sslContext)
                 }
             }
-            .build()
 
+        val settings = builder.build()
         val client: MongoClient = MongoClients.create(settings)
         return client.getDatabase("Xplore")
     }
@@ -34,6 +33,7 @@ object MongoDBClient {
     class TrustAllCertificates : javax.net.ssl.X509TrustManager {
         override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>?, authType: String?) {}
         override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>?, authType: String?) {}
-        override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate>? = null
+        override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
     }
 }
+
