@@ -2,35 +2,31 @@
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 # IntelliJ IDEA
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/
 *.iws
 *.iml
 *.ipr
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/libraries/
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
 
 # Kotlin
-.kotlin
+.kotlin/
 
 # Eclipse
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
 # NetBeans
 /nbproject/private/
@@ -53,32 +49,30 @@ bin/
 *.tmp
 *.temp
 *.swp
-*~ 
+*~
 
 # Backup files
 *.bak
 *.old
 
-# System generated
+# System-generated files
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-.idea/workspace.xml
-.idea/tasks.xml
 
-# Node.js specific (if applicable)
+# Node.js specific
 node_modules/
 npm-debug.log
 yarn-error.log
 pnpm-debug.log
 
-# Python virtual environments (if applicable)
+# Python virtual environments
 .venv/
 env/
 __pycache__/
 *.py[cod]
 
-# Java specific
+# Java-specific
 *.class
 
 # Cache
@@ -94,3 +88,12 @@ target/
 .idea/
 *.ipr
 *.iws
+
+# Remove specific exclusions for clarity
+!**/src/main/**/build/
+!**/src/test/**/build/
+src/main/kotlin/util/Keys.kt
+.idea/gradle.xml
+.idea/misc.xml
+
+.env
